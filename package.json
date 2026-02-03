@@ -1,0 +1,34 @@
+{
+  "name": "@atomiqlabs/btc-mempool",
+  "version": "1.0.0",
+  "description": "Connector and synchronizer using mempool.space API for bitcoin",
+  "main": "./dist/index.js",
+  "types:": "./dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ts4": "npx -p typescript@4.9 tsc --noEmit",
+    "build:ts5": "npx -p typescript@5.9 tsc --noEmit"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "keywords": [
+    "Solana",
+    "Bitcoin",
+    "Cross-chain",
+    "Cryptocurrency",
+    "Bridge",
+    "Trustless"
+  ],
+  "author": "adambor",
+  "license": "ISC",
+  "dependencies": {
+    "@atomiqlabs/base": "github:atomiqlabs/atomiq-base#develop",
+    "@scure/btc-signer": "1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "typescript": ">=4"
+  }
+}
