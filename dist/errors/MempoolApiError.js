@@ -12,6 +12,7 @@ class MempoolApiError extends Error {
         // Set the prototype explicitly.
         Object.setPrototypeOf(this, MempoolApiError.prototype);
         this.httpCode = httpCode;
+        this.responseMessage = msg;
     }
 }
 exports.MempoolApiError = MempoolApiError;

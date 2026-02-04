@@ -399,8 +399,8 @@ export class MempoolApi {
      */
     getLNNodeInfo(pubkey: string): Promise<LNNodeInfo | null> {
         //500, 200
-        return this.request<LNNodeInfo>("v1/lightning/nodes/"+pubkey, "obj").catch((e: Error) => {
-            if(e.message==="This node does not exist, or our node is not seeing it yet") return null;
+        return this.request<LNNodeInfo>("v1/lightning/nodes/"+pubkey, "obj").catch((e: MempoolApiError) => {
+            if(e.responseMessage==="This node does not exist, or our node is not seeing it yet") return null;
             throw e;
         });
     }
@@ -412,8 +412,8 @@ export class MempoolApi {
      */
     getTransaction(txId: string): Promise<BitcoinTransaction | null> {
         //404 ("Transaction not found"), 200
-        return this.request<BitcoinTransaction>("tx/"+txId, "obj").catch((e: Error) => {
-            if(e.message==="Transaction not found") return null;
+        return this.request<BitcoinTransaction>("tx/"+txId, "obj").catch((e: MempoolApiError) => {
+            if(e.responseMessage==="Transaction not found") return null;
             throw e;
         });
     }
@@ -425,8 +425,8 @@ export class MempoolApi {
      */
     async getRawTransaction(txId: string): Promise<Buffer | null> {
         //404 ("Transaction not found"), 200
-        const rawTransaction: string | null = await this.request<string>("tx/"+txId+"/hex", "str").catch((e: Error) => {
-            if(e.message==="Transaction not found") return null;
+        const rawTransaction: string | null = await this.request<string>("tx/"+txId+"/hex", "str").catch((e: MempoolApiError) => {
+            if(e.responseMessage==="Transaction not found") return null;
             throw e;
         });
         return rawTransaction==null ? null : Buffer.from(rawTransaction, "hex")

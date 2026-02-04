@@ -166,7 +166,7 @@ class MempoolApi {
     getLNNodeInfo(pubkey) {
         //500, 200
         return this.request("v1/lightning/nodes/" + pubkey, "obj").catch((e) => {
-            if (e.message === "This node does not exist, or our node is not seeing it yet")
+            if (e.responseMessage === "This node does not exist, or our node is not seeing it yet")
                 return null;
             throw e;
         });
@@ -179,7 +179,7 @@ class MempoolApi {
     getTransaction(txId) {
         //404 ("Transaction not found"), 200
         return this.request("tx/" + txId, "obj").catch((e) => {
-            if (e.message === "Transaction not found")
+            if (e.responseMessage === "Transaction not found")
                 return null;
             throw e;
         });
@@ -192,7 +192,7 @@ class MempoolApi {
     async getRawTransaction(txId) {
         //404 ("Transaction not found"), 200
         const rawTransaction = await this.request("tx/" + txId + "/hex", "str").catch((e) => {
-            if (e.message === "Transaction not found")
+            if (e.responseMessage === "Transaction not found")
                 return null;
             throw e;
         });

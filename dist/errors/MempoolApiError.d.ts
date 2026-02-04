@@ -5,5 +5,6 @@
  */
 export declare class MempoolApiError extends Error {
     httpCode: number;
+    responseMessage: string;
     constructor(msg: string, httpCode: number);
 }
