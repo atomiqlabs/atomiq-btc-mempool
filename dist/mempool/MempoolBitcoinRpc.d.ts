@@ -163,4 +163,5 @@ export declare class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<Mem
         effectiveFeePerVsize: number;
         adjustedVsize: number;
     } | null>;
+    outputScriptToAddress(outputScriptHex: string): Promise<string>;
 }

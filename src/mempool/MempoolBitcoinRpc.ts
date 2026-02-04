@@ -10,7 +10,7 @@ import {
 import {MempoolBitcoinBlock} from "./MempoolBitcoinBlock";
 import {BitcoinTransaction, MempoolApi, TxVout} from "./MempoolApi";
 import {Buffer} from "buffer";
-import {Script, Transaction} from "@scure/btc-signer";
+import {Address, OutScript, Script, Transaction} from "@scure/btc-signer";
 import {sha256} from "@noble/hashes/sha2";
 
 const BITCOIN_BLOCKTIME = 600 * 1000;
@@ -489,6 +489,10 @@ export class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<MempoolBitc
         const cpfpData = await this.api.getCPFPData(txId);
         if(cpfpData==null || cpfpData.effectiveFeePerVsize==null) return null;
         return cpfpData;
+    }
+
+    outputScriptToAddress(outputScriptHex: string): Promise<string> {
+        return Promise.resolve(Address().encode(OutScript.decode(Buffer.from(outputScriptHex, "hex"))));
     }
 
 }

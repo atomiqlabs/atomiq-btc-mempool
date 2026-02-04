@@ -1,6 +1,6 @@
 {
   "name": "@atomiqlabs/btc-mempool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connector and synchronizer using mempool.space API for bitcoin",
   "main": "./dist/index.js",
   "types:": "./dist/index.d.ts",

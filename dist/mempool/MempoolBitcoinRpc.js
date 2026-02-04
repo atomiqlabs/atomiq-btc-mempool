@@ -411,5 +411,8 @@ class MempoolBitcoinRpc {
             return null;
         return cpfpData;
     }
+    outputScriptToAddress(outputScriptHex) {
+        return Promise.resolve((0, btc_signer_1.Address)().encode(btc_signer_1.OutScript.decode(buffer_1.Buffer.from(outputScriptHex, "hex"))));
+    }
 }
 exports.MempoolBitcoinRpc = MempoolBitcoinRpc;
