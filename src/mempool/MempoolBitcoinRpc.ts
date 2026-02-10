@@ -506,6 +506,9 @@ export class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<MempoolBitc
         return cpfpData;
     }
 
+    /**
+     * @inheritDoc
+     */
     outputScriptToAddress(outputScriptHex: string): Promise<string> {
         return Promise.resolve(Address(this.network).encode(OutScript.decode(Buffer.from(outputScriptHex, "hex"))));
     }

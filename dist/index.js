@@ -14,8 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MempoolBitcoinBlock = void 0;
 __exportStar(require("./errors/MempoolApiError"), exports);
 __exportStar(require("./mempool/MempoolApi"), exports);
-__exportStar(require("./mempool/MempoolBitcoinBlock"), exports);
+var MempoolBitcoinBlock_1 = require("./mempool/MempoolBitcoinBlock");
+Object.defineProperty(exports, "MempoolBitcoinBlock", { enumerable: true, get: function () { return MempoolBitcoinBlock_1.MempoolBitcoinBlock; } });
 __exportStar(require("./mempool/MempoolBitcoinRpc"), exports);
 __exportStar(require("./synchronizer/MempoolBtcRelaySynchronizer"), exports);

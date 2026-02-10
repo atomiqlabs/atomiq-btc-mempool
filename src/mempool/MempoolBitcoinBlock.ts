@@ -17,6 +17,11 @@ export type MempoolBitcoinBlockType = {
     difficulty: number
 }
 
+/**
+ * Bitcoin block representation as fetched from mempool.space
+ *
+ * @category Bitcoin
+ */
 export class MempoolBitcoinBlock implements BtcBlock {
 
     id: string;
@@ -49,38 +54,67 @@ export class MempoolBitcoinBlock implements BtcBlock {
         this.difficulty = obj.difficulty;
     }
 
+    /**
+     * @inheritDoc
+     */
     getHeight(): number {
         return this.height;
     }
 
+    /**
+     * @inheritDoc
+     */
     getHash(): string {
         return this.id;
     }
 
+    /**
+     * @inheritDoc
+     */
     getMerkleRoot(): string {
         return this.merkle_root;
     }
 
+    /**
+     * @inheritDoc
+     */
     getNbits(): number {
         return this.bits;
     }
 
+    /**
+     * @inheritDoc
+     */
     getNonce(): number {
         return this.nonce;
     }
 
+    /**
+     * @inheritDoc
+     */
     getPrevBlockhash(): string {
         return this.previousblockhash;
     }
 
+    /**
+     * @inheritDoc
+     */
     getTimestamp(): number {
         return this.timestamp;
     }
 
+    /**
+     * @inheritDoc
+     */
     getVersion(): number {
         return this.version;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Not supported with mempool.space backend!
+     */
     getChainWork(): Buffer {
         throw new Error("Unsupported");
     }

@@ -17,6 +17,11 @@ export type MempoolBitcoinBlockType = {
     bits: number;
     difficulty: number;
 };
+/**
+ * Bitcoin block representation as fetched from mempool.space
+ *
+ * @category Bitcoin
+ */
 export declare class MempoolBitcoinBlock implements BtcBlock {
     id: string;
     height: number;
@@ -32,13 +37,42 @@ export declare class MempoolBitcoinBlock implements BtcBlock {
     bits: number;
     difficulty: number;
     constructor(obj: MempoolBitcoinBlockType);
+    /**
+     * @inheritDoc
+     */
     getHeight(): number;
+    /**
+     * @inheritDoc
+     */
     getHash(): string;
+    /**
+     * @inheritDoc
+     */
     getMerkleRoot(): string;
+    /**
+     * @inheritDoc
+     */
     getNbits(): number;
+    /**
+     * @inheritDoc
+     */
     getNonce(): number;
+    /**
+     * @inheritDoc
+     */
     getPrevBlockhash(): string;
+    /**
+     * @inheritDoc
+     */
     getTimestamp(): number;
+    /**
+     * @inheritDoc
+     */
     getVersion(): number;
+    /**
+     * @inheritDoc
+     *
+     * Not supported with mempool.space backend!
+     */
     getChainWork(): Buffer;
 }
