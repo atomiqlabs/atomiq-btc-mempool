@@ -1,9 +1,10 @@
 /// <reference types="node" />
 /// <reference types="node" />
-import { BitcoinRpcWithAddressIndex, BtcBlockWithTxs, BtcSyncInfo, BtcTx, BtcTxWithBlockheight, LightningNetworkApi, LNNodeLiquidity } from "@atomiqlabs/base";
+import { BitcoinNetwork, BitcoinRpcWithAddressIndex, BtcBlockWithTxs, BtcSyncInfo, BtcTx, BtcTxWithBlockheight, LightningNetworkApi, LNNodeLiquidity } from "@atomiqlabs/base";
 import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock";
 import { MempoolApi } from "./MempoolApi";
 import { Buffer } from "buffer";
+import { BTC_NETWORK } from "@scure/btc-signer/utils";
 /**
  * Bitcoin RPC implementation via Mempool.space API
  *
@@ -11,7 +12,8 @@ import { Buffer } from "buffer";
  */
 export declare class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<MempoolBitcoinBlock>, LightningNetworkApi {
     api: MempoolApi;
-    constructor(urlOrMempoolApi: MempoolApi | string | string[]);
+    network: BTC_NETWORK;
+    constructor(urlOrMempoolApi: MempoolApi | string | string[], network?: BitcoinNetwork);
     /**
      * Returns a txo hash for a specific transaction vout
      *

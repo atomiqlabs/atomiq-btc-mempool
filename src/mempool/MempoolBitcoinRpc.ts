@@ -1,17 +1,21 @@
 import {
     BigIntBufferUtils,
+    BitcoinNetwork,
     BitcoinRpcWithAddressIndex,
     BtcBlockWithTxs,
     BtcSyncInfo,
     BtcTx,
     BtcTxWithBlockheight,
-    LightningNetworkApi, LNNodeLiquidity, timeoutPromise
+    LightningNetworkApi,
+    LNNodeLiquidity,
+    timeoutPromise
 } from "@atomiqlabs/base";
 import {MempoolBitcoinBlock} from "./MempoolBitcoinBlock";
 import {BitcoinTransaction, MempoolApi, TxVout} from "./MempoolApi";
 import {Buffer} from "buffer";
-import {Address, OutScript, Script, Transaction} from "@scure/btc-signer";
+import {Address, NETWORK, OutScript, Script, TEST_NETWORK, Transaction} from "@scure/btc-signer";
 import {sha256} from "@noble/hashes/sha2";
+import {BTC_NETWORK} from "@scure/btc-signer/utils";
 
 const BITCOIN_BLOCKTIME = 600 * 1000;
 const BITCOIN_BLOCKSIZE = 1024*1024;
@@ -61,9 +65,20 @@ function bitcoinTxToBtcTx(btcTx: Transaction): BtcTx {
 export class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<MempoolBitcoinBlock>, LightningNetworkApi {
 
     api: MempoolApi;
+    network: BTC_NETWORK;
 
-    constructor(urlOrMempoolApi: MempoolApi | string | string[]) {
+    constructor(urlOrMempoolApi: MempoolApi | string | string[], network: BitcoinNetwork = BitcoinNetwork.MAINNET) {
         this.api = urlOrMempoolApi instanceof MempoolApi ? urlOrMempoolApi : new MempoolApi(urlOrMempoolApi);
+        if(network===BitcoinNetwork.MAINNET) {
+            this.network = NETWORK;
+        } else if(network===BitcoinNetwork.REGTEST) {
+            this.network = {
+                ...TEST_NETWORK,
+                bech32: "bcrt"
+            };
+        } else {
+            this.network = TEST_NETWORK;
+        }
     }
 
     /**
@@ -492,7 +507,7 @@ export class MempoolBitcoinRpc implements BitcoinRpcWithAddressIndex<MempoolBitc
     }
 
     outputScriptToAddress(outputScriptHex: string): Promise<string> {
-        return Promise.resolve(Address().encode(OutScript.decode(Buffer.from(outputScriptHex, "hex"))));
+        return Promise.resolve(Address(this.network).encode(OutScript.decode(Buffer.from(outputScriptHex, "hex"))));
     }
 
 }

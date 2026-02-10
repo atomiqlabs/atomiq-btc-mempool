@@ -50,8 +50,20 @@ function bitcoinTxToBtcTx(btcTx) {
  * @category Bitcoin
  */
 class MempoolBitcoinRpc {
-    constructor(urlOrMempoolApi) {
+    constructor(urlOrMempoolApi, network = base_1.BitcoinNetwork.MAINNET) {
         this.api = urlOrMempoolApi instanceof MempoolApi_1.MempoolApi ? urlOrMempoolApi : new MempoolApi_1.MempoolApi(urlOrMempoolApi);
+        if (network === base_1.BitcoinNetwork.MAINNET) {
+            this.network = btc_signer_1.NETWORK;
+        }
+        else if (network === base_1.BitcoinNetwork.REGTEST) {
+            this.network = {
+                ...btc_signer_1.TEST_NETWORK,
+                bech32: "bcrt"
+            };
+        }
+        else {
+            this.network = btc_signer_1.TEST_NETWORK;
+        }
     }
     /**
      * Returns a txo hash for a specific transaction vout
@@ -412,7 +424,7 @@ class MempoolBitcoinRpc {
         return cpfpData;
     }
     outputScriptToAddress(outputScriptHex) {
-        return Promise.resolve((0, btc_signer_1.Address)().encode(btc_signer_1.OutScript.decode(buffer_1.Buffer.from(outputScriptHex, "hex"))));
+        return Promise.resolve((0, btc_signer_1.Address)(this.network).encode(btc_signer_1.OutScript.decode(buffer_1.Buffer.from(outputScriptHex, "hex"))));
     }
 }
 exports.MempoolBitcoinRpc = MempoolBitcoinRpc;
