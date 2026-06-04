@@ -421,14 +421,26 @@ class MempoolBitcoinRpc {
         const cpfpData = await this.api.getCPFPData(txId);
         if (cpfpData == null || cpfpData.effectiveFeePerVsize == null)
             return null;
-        //Calculate very conservative vSize by summing up all the weights of the ancestors
-        let totalWeight = 0;
+        //Calculate very conservative vSize by summing up all the weights of the ancestors and only taking in
+        // detrimental downward fee adjustments from the ancestors
         if (cpfpData.ancestors != null) {
+            const txFeeRate = cpfpData.fee / cpfpData.adjustedVsize;
+            let totalVSize = cpfpData.adjustedVsize;
+            let effectiveFeeRateVSize = cpfpData.adjustedVsize;
+            let effectiveFeeRateFee = cpfpData.fee;
             for (let ancestor of cpfpData.ancestors) {
-                totalWeight += ancestor.weight;
+                const vSize = ancestor.weight / 4;
+                totalVSize += vSize;
+                const ancestorFeeRate = ancestor.fee / vSize;
+                //Pulls down the effective fee rate
+                if (ancestorFeeRate < txFeeRate) {
+                    effectiveFeeRateVSize += vSize;
+                    effectiveFeeRateFee += ancestor.fee;
+                }
             }
+            cpfpData.adjustedVsize = totalVSize;
+            cpfpData.effectiveFeePerVsize = effectiveFeeRateFee / effectiveFeeRateVSize;
         }
-        cpfpData.adjustedVsize += totalWeight / 4;
         return cpfpData;
     }
     /**

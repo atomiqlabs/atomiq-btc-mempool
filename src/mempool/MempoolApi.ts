@@ -157,6 +157,7 @@ export type TransactionCPFPData = {
     effectiveFeePerVsize: number,
     sigops: number,
     adjustedVsize: number,
+    fee: number,
     cluster: {
         txs: {
             txid: string,
