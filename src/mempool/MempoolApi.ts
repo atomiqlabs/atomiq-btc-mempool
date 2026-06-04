@@ -156,7 +156,20 @@ export type TransactionCPFPData = {
     }[],
     effectiveFeePerVsize: number,
     sigops: number,
-    adjustedVsize: number
+    adjustedVsize: number,
+    cluster: {
+        txs: {
+            txid: string,
+            fee: number,
+            weight: number,
+            parents: number[]
+        }[],
+        chunks: {
+            txs: number[],
+            feerate: number
+        }[],
+        chunkIndex: number
+    }
 };
 
 /**

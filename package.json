@@ -1,11 +1,12 @@
 {
   "name": "@atomiqlabs/btc-mempool",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Connector and synchronizer using mempool.space API for bitcoin",
   "main": "./dist/index.js",
   "types:": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx -y -p typescript@4.9 tsc",
     "build:ts4": "npx -p typescript@4.9 tsc --noEmit",
     "build:ts5": "npx -p typescript@5.9 tsc --noEmit"
   },
@@ -24,7 +25,7 @@
   "author": "adambor",
   "license": "ISC",
   "dependencies": {
-    "@atomiqlabs/base": "^13.1.2",
+    "@atomiqlabs/base": "^13.5.2",
     "@scure/btc-signer": "1.6.0"
   },
   "devDependencies": {

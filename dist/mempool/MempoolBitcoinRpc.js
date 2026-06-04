@@ -421,6 +421,14 @@ class MempoolBitcoinRpc {
         const cpfpData = await this.api.getCPFPData(txId);
         if (cpfpData == null || cpfpData.effectiveFeePerVsize == null)
             return null;
+        //Calculate very conservative vSize by summing up all the weights of the ancestors
+        let totalWeight = 0;
+        if (cpfpData.ancestors != null) {
+            for (let ancestor of cpfpData.ancestors) {
+                totalWeight += ancestor.weight;
+            }
+        }
+        cpfpData.adjustedVsize += totalWeight / 4;
         return cpfpData;
     }
     /**
