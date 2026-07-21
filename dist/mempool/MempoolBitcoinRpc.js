@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MempoolBitcoinRpc = void 0;
 const base_1 = require("@atomiqlabs/base");
-const MempoolBitcoinBlock_1 = require("./MempoolBitcoinBlock");
-const MempoolApi_1 = require("./MempoolApi");
+const MempoolBitcoinBlock_js_1 = require("./MempoolBitcoinBlock.js");
+const MempoolApi_js_1 = require("./MempoolApi.js");
 const buffer_1 = require("buffer");
 const btc_signer_1 = require("@scure/btc-signer");
 const sha2_1 = require("@noble/hashes/sha2");
@@ -51,7 +51,7 @@ function bitcoinTxToBtcTx(btcTx) {
  */
 class MempoolBitcoinRpc {
     constructor(urlOrMempoolApi, network = base_1.BitcoinNetwork.MAINNET) {
-        this.api = urlOrMempoolApi instanceof MempoolApi_1.MempoolApi ? urlOrMempoolApi : new MempoolApi_1.MempoolApi(urlOrMempoolApi);
+        this.api = urlOrMempoolApi instanceof MempoolApi_js_1.MempoolApi ? urlOrMempoolApi : new MempoolApi_js_1.MempoolApi(urlOrMempoolApi);
         if (network === base_1.BitcoinNetwork.MAINNET) {
             this.network = btc_signer_1.NETWORK;
         }
@@ -196,7 +196,7 @@ class MempoolBitcoinRpc {
      * @inheritDoc
      */
     async getBlockHeader(blockhash) {
-        return new MempoolBitcoinBlock_1.MempoolBitcoinBlock(await this.api.getBlockHeader(blockhash));
+        return new MempoolBitcoinBlock_js_1.MempoolBitcoinBlock(await this.api.getBlockHeader(blockhash));
     }
     /**
      * @inheritDoc
@@ -254,7 +254,7 @@ class MempoolBitcoinRpc {
      * @private
      */
     async getPast15Blocks(height) {
-        return (await this.api.getPast15BlockHeaders(height)).map(blockHeader => new MempoolBitcoinBlock_1.MempoolBitcoinBlock(blockHeader));
+        return (await this.api.getPast15BlockHeaders(height)).map(blockHeader => new MempoolBitcoinBlock_js_1.MempoolBitcoinBlock(blockHeader));
     }
     /**
      * @inheritDoc

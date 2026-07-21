@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MempoolApi = void 0;
 const buffer_1 = require("buffer");
-const MempoolApiError_1 = require("../errors/MempoolApiError");
+const MempoolApiError_js_1 = require("../errors/MempoolApiError.js");
 const base_1 = require("@atomiqlabs/base");
 const MempoolApiEndpoints = {
     [base_1.BitcoinNetwork.MAINNET]: [
@@ -73,9 +73,9 @@ class MempoolApi {
                 resp = await response.text();
             }
             catch (e) {
-                throw new MempoolApiError_1.MempoolApiError(response.statusText, response.status);
+                throw new MempoolApiError_js_1.MempoolApiError(response.statusText, response.status);
             }
-            throw new MempoolApiError_1.MempoolApiError(resp, response.status);
+            throw new MempoolApiError_js_1.MempoolApiError(resp, response.status);
         }
         if (responseType === "str")
             return await response.text();
@@ -100,7 +100,7 @@ class MempoolApi {
                 }
                 catch (e) {
                     //Only mark as non operational on 5xx server errors!
-                    if (e instanceof MempoolApiError_1.MempoolApiError && Math.floor(e.httpCode / 100) !== 5) {
+                    if (e instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(e.httpCode / 100) !== 5) {
                         obj.operational = true;
                         throw e;
                     }
@@ -113,7 +113,7 @@ class MempoolApi {
         }
         catch (_e) {
             const e = _e;
-            throw e.errors.find(err => err instanceof MempoolApiError_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5) || e.errors[0];
+            throw e.errors.find(err => err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5) || e.errors[0];
         }
     }
     /**
@@ -132,14 +132,14 @@ class MempoolApi {
             if (operationalPriceApi != null) {
                 return this._request(operationalPriceApi.url, path, responseType, type, body).catch(err => {
                     //Only retry on 5xx server errors!
-                    if (err instanceof MempoolApiError_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5)
+                    if (err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5)
                         throw err;
                     operationalPriceApi.operational = false;
                     return this.requestFromMaybeOperationalUrls(path, responseType, type, body);
                 });
             }
             return this.requestFromMaybeOperationalUrls(path, responseType, type, body);
-        }, undefined, (err) => err instanceof MempoolApiError_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5);
+        }, undefined, (err) => err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5);
     }
     constructor(urlOrNetwork, timeout) {
         if (typeof (urlOrNetwork) === "number") {

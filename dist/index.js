@@ -15,9 +15,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MempoolBitcoinBlock = void 0;
-__exportStar(require("./errors/MempoolApiError"), exports);
-__exportStar(require("./mempool/MempoolApi"), exports);
-var MempoolBitcoinBlock_1 = require("./mempool/MempoolBitcoinBlock");
-Object.defineProperty(exports, "MempoolBitcoinBlock", { enumerable: true, get: function () { return MempoolBitcoinBlock_1.MempoolBitcoinBlock; } });
-__exportStar(require("./mempool/MempoolBitcoinRpc"), exports);
-__exportStar(require("./synchronizer/MempoolBtcRelaySynchronizer"), exports);
+__exportStar(require("./errors/MempoolApiError.js"), exports);
+__exportStar(require("./mempool/MempoolApi.js"), exports);
+var MempoolBitcoinBlock_js_1 = require("./mempool/MempoolBitcoinBlock.js");
+Object.defineProperty(exports, "MempoolBitcoinBlock", { enumerable: true, get: function () { return MempoolBitcoinBlock_js_1.MempoolBitcoinBlock; } });
+__exportStar(require("./mempool/MempoolBitcoinRpc.js"), exports);
+__exportStar(require("./synchronizer/MempoolBtcRelaySynchronizer.js"), exports);

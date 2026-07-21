@@ -1,6 +1,6 @@
 import {BtcRelay, BtcStoredHeader, RelaySynchronizer, timeoutPromise} from "@atomiqlabs/base";
-import {MempoolBitcoinBlock} from "../mempool/MempoolBitcoinBlock";
-import {MempoolBitcoinRpc} from "../mempool/MempoolBitcoinRpc";
+import {MempoolBitcoinBlock} from "../mempool/MempoolBitcoinBlock.js";
+import {MempoolBitcoinRpc} from "../mempool/MempoolBitcoinRpc.js";
 
 /**
  * Mempool.space API based bitcoin relay synchronizer

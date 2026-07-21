@@ -1,6 +1,6 @@
 import { BigIntBufferUtils, BitcoinNetwork, timeoutPromise } from "@atomiqlabs/base";
-import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock";
-import { MempoolApi } from "./MempoolApi";
+import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock.js";
+import { MempoolApi } from "./MempoolApi.js";
 import { Buffer } from "buffer";
 import { Address, NETWORK, OutScript, Script, TEST_NETWORK, Transaction } from "@scure/btc-signer";
 import { sha256 } from "@noble/hashes/sha2";

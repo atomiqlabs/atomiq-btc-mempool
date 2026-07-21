@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { MempoolApiError } from "../errors/MempoolApiError";
+import { MempoolApiError } from "../errors/MempoolApiError.js";
 import { BitcoinNetwork, tryWithRetries } from "@atomiqlabs/base";
 const MempoolApiEndpoints = {
     [BitcoinNetwork.MAINNET]: [

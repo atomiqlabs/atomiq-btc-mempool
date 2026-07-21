@@ -1,8 +1,8 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import { BitcoinNetwork, BitcoinRpcWithAddressIndex, BtcBlockWithTxs, BtcSyncInfo, BtcTx, BtcTxWithBlockheight, LightningNetworkApi, LNNodeLiquidity } from "@atomiqlabs/base";
-import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock";
-import { MempoolApi } from "./MempoolApi";
+import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock.js";
+import { MempoolApi } from "./MempoolApi.js";
 import { Buffer } from "buffer";
 import { BTC_NETWORK } from "@scure/btc-signer/utils";
 /**
