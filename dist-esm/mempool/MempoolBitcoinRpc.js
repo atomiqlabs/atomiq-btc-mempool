@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MempoolBitcoinRpc = void 0;
-const base_1 = require("@atomiqlabs/base");
-const MempoolBitcoinBlock_js_1 = require("./MempoolBitcoinBlock.js");
-const MempoolApi_js_1 = require("./MempoolApi.js");
-const buffer_1 = require("buffer");
-const btc_signer_1 = require("@scure/btc-signer");
-const sha2_1 = require("@noble/hashes/sha2");
+import { BigIntBufferUtils, BitcoinNetwork, timeoutPromise } from "@atomiqlabs/base";
+import { MempoolBitcoinBlock } from "./MempoolBitcoinBlock.js";
+import { MempoolApi } from "./MempoolApi.js";
+import { Buffer } from "buffer";
+import { Address, NETWORK, OutScript, Script, TEST_NETWORK, Transaction } from "@scure/btc-signer";
+import { sha256 } from "@noble/hashes/sha2";
 const BITCOIN_BLOCKTIME = 600 * 1000;
 const BITCOIN_BLOCKSIZE = 1024 * 1024;
 function bitcoinTxToBtcTx(btcTx) {
@@ -14,9 +11,9 @@ function bitcoinTxToBtcTx(btcTx) {
         locktime: btcTx.lockTime,
         version: btcTx.version,
         confirmations: 0,
-        txid: buffer_1.Buffer.from((0, sha2_1.sha256)((0, sha2_1.sha256)(btcTx.toBytes(true, false)))).reverse().toString("hex"),
-        hex: buffer_1.Buffer.from(btcTx.toBytes(true, false)).toString("hex"),
-        raw: buffer_1.Buffer.from(btcTx.toBytes(true, true)).toString("hex"),
+        txid: Buffer.from(sha256(sha256(btcTx.toBytes(true, false)))).reverse().toString("hex"),
+        hex: Buffer.from(btcTx.toBytes(true, false)).toString("hex"),
+        raw: Buffer.from(btcTx.toBytes(true, true)).toString("hex"),
         vsize: btcTx.isFinal ? btcTx.vsize : NaN,
         outs: Array.from({ length: btcTx.outputsLength }, (_, i) => i).map((index) => {
             const output = btcTx.getOutput(index);
@@ -24,22 +21,22 @@ function bitcoinTxToBtcTx(btcTx) {
                 value: Number(output.amount),
                 n: index,
                 scriptPubKey: {
-                    asm: btc_signer_1.Script.decode(output.script).map(val => typeof (val) === "object" ? buffer_1.Buffer.from(val).toString("hex") : val.toString()).join(" "),
-                    hex: buffer_1.Buffer.from(output.script).toString("hex")
+                    asm: Script.decode(output.script).map(val => typeof (val) === "object" ? Buffer.from(val).toString("hex") : val.toString()).join(" "),
+                    hex: Buffer.from(output.script).toString("hex")
                 }
             };
         }),
         ins: Array.from({ length: btcTx.inputsLength }, (_, i) => i).map(index => {
             const input = btcTx.getInput(index);
             return {
-                txid: buffer_1.Buffer.from(input.txid).toString("hex"),
+                txid: Buffer.from(input.txid).toString("hex"),
                 vout: input.index,
                 scriptSig: {
-                    asm: btc_signer_1.Script.decode(input.finalScriptSig).map(val => typeof (val) === "object" ? buffer_1.Buffer.from(val).toString("hex") : val.toString()).join(" "),
-                    hex: buffer_1.Buffer.from(input.finalScriptSig).toString("hex")
+                    asm: Script.decode(input.finalScriptSig).map(val => typeof (val) === "object" ? Buffer.from(val).toString("hex") : val.toString()).join(" "),
+                    hex: Buffer.from(input.finalScriptSig).toString("hex")
                 },
                 sequence: input.sequence,
-                txinwitness: input.finalScriptWitness == null ? [] : input.finalScriptWitness.map(witness => buffer_1.Buffer.from(witness).toString("hex"))
+                txinwitness: input.finalScriptWitness == null ? [] : input.finalScriptWitness.map(witness => Buffer.from(witness).toString("hex"))
             };
         })
     };
@@ -49,20 +46,20 @@ function bitcoinTxToBtcTx(btcTx) {
  *
  * @category Bitcoin
  */
-class MempoolBitcoinRpc {
-    constructor(urlOrMempoolApi, network = base_1.BitcoinNetwork.MAINNET) {
-        this.api = urlOrMempoolApi instanceof MempoolApi_js_1.MempoolApi ? urlOrMempoolApi : new MempoolApi_js_1.MempoolApi(urlOrMempoolApi);
-        if (network === base_1.BitcoinNetwork.MAINNET) {
-            this.network = btc_signer_1.NETWORK;
+export class MempoolBitcoinRpc {
+    constructor(urlOrMempoolApi, network = BitcoinNetwork.MAINNET) {
+        this.api = urlOrMempoolApi instanceof MempoolApi ? urlOrMempoolApi : new MempoolApi(urlOrMempoolApi);
+        if (network === BitcoinNetwork.MAINNET) {
+            this.network = NETWORK;
         }
-        else if (network === base_1.BitcoinNetwork.REGTEST) {
+        else if (network === BitcoinNetwork.REGTEST) {
             this.network = {
-                ...btc_signer_1.TEST_NETWORK,
+                ...TEST_NETWORK,
                 bech32: "bcrt"
             };
         }
         else {
-            this.network = btc_signer_1.TEST_NETWORK;
+            this.network = TEST_NETWORK;
         }
     }
     /**
@@ -72,9 +69,9 @@ class MempoolBitcoinRpc {
      * @private
      */
     static getTxoHash(vout) {
-        return buffer_1.Buffer.from((0, sha2_1.sha256)(buffer_1.Buffer.concat([
-            base_1.BigIntBufferUtils.toBuffer(BigInt(vout.value), "le", 8),
-            buffer_1.Buffer.from(vout.scriptpubkey, "hex")
+        return Buffer.from(sha256(Buffer.concat([
+            BigIntBufferUtils.toBuffer(BigInt(vout.value), "le", 8),
+            Buffer.from(vout.scriptpubkey, "hex")
         ])));
     }
     /**
@@ -129,13 +126,13 @@ class MempoolBitcoinRpc {
         if (rawTx == null)
             return null;
         //Strip witness data
-        const btcTx = btc_signer_1.Transaction.fromRaw(rawTx, {
+        const btcTx = Transaction.fromRaw(rawTx, {
             allowLegacyWitnessUtxo: true,
             allowUnknownInputs: true,
             allowUnknownOutputs: true,
             disableScriptCheck: true
         });
-        const strippedRawTx = buffer_1.Buffer.from(btcTx.toBytes(true, false)).toString("hex");
+        const strippedRawTx = Buffer.from(btcTx.toBytes(true, false)).toString("hex");
         return {
             ...base,
             hex: strippedRawTx,
@@ -196,7 +193,7 @@ class MempoolBitcoinRpc {
      * @inheritDoc
      */
     async getBlockHeader(blockhash) {
-        return new MempoolBitcoinBlock_js_1.MempoolBitcoinBlock(await this.api.getBlockHeader(blockhash));
+        return new MempoolBitcoinBlock(await this.api.getBlockHeader(blockhash));
     }
     /**
      * @inheritDoc
@@ -204,9 +201,9 @@ class MempoolBitcoinRpc {
     async getMerkleProof(txId, blockhash) {
         const proof = await this.api.getTransactionProof(txId);
         return {
-            reversedTxId: buffer_1.Buffer.from(txId, "hex").reverse(),
+            reversedTxId: Buffer.from(txId, "hex").reverse(),
             pos: proof.pos,
-            merkle: proof.merkle.map(e => buffer_1.Buffer.from(e, "hex").reverse()),
+            merkle: proof.merkle.map(e => Buffer.from(e, "hex").reverse()),
             blockheight: proof.block_height
         };
     }
@@ -254,7 +251,7 @@ class MempoolBitcoinRpc {
      * @private
      */
     async getPast15Blocks(height) {
-        return (await this.api.getPast15BlockHeaders(height)).map(blockHeader => new MempoolBitcoinBlock_js_1.MempoolBitcoinBlock(blockHeader));
+        return (await this.api.getPast15BlockHeaders(height)).map(blockHeader => new MempoolBitcoinBlock(blockHeader));
     }
     /**
      * @inheritDoc
@@ -292,7 +289,7 @@ class MempoolBitcoinRpc {
         if (abortSignal != null)
             abortSignal.throwIfAborted();
         while (abortSignal == null || !abortSignal.aborted) {
-            await (0, base_1.timeoutPromise)((intervalSeconds || 5) * 1000, abortSignal);
+            await timeoutPromise((intervalSeconds || 5) * 1000, abortSignal);
             const result = await this.checkAddressTxos(address, txoHash);
             if (result == null) {
                 stateUpdateCbk();
@@ -315,7 +312,7 @@ class MempoolBitcoinRpc {
         if (abortSignal != null)
             abortSignal.throwIfAborted();
         while (abortSignal == null || !abortSignal.aborted) {
-            await (0, base_1.timeoutPromise)((intervalSeconds || 5) * 1000, abortSignal);
+            await timeoutPromise((intervalSeconds || 5) * 1000, abortSignal);
             const result = await this.getTransaction(txId);
             if (result == null) {
                 stateUpdateCbk();
@@ -374,7 +371,7 @@ class MempoolBitcoinRpc {
      * @inheritDoc
      */
     parseTransaction(rawTx) {
-        const btcTx = btc_signer_1.Transaction.fromRaw(buffer_1.Buffer.from(rawTx, "hex"), {
+        const btcTx = Transaction.fromRaw(Buffer.from(rawTx, "hex"), {
             allowLegacyWitnessUtxo: true,
             allowUnknownInputs: true,
             allowUnknownOutputs: true,
@@ -447,7 +444,6 @@ class MempoolBitcoinRpc {
      * @inheritDoc
      */
     outputScriptToAddress(outputScriptHex) {
-        return Promise.resolve((0, btc_signer_1.Address)(this.network).encode(btc_signer_1.OutScript.decode(buffer_1.Buffer.from(outputScriptHex, "hex"))));
+        return Promise.resolve(Address(this.network).encode(OutScript.decode(Buffer.from(outputScriptHex, "hex"))));
     }
 }
-exports.MempoolBitcoinRpc = MempoolBitcoinRpc;

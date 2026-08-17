@@ -1,23 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MempoolApi = void 0;
-const buffer_1 = require("buffer");
-const MempoolApiError_js_1 = require("../errors/MempoolApiError.js");
-const base_1 = require("@atomiqlabs/base");
+import { Buffer } from "buffer";
+import { MempoolApiError } from "../errors/MempoolApiError.js";
+import { BitcoinNetwork, tryWithRetries } from "@atomiqlabs/base";
 const MempoolApiEndpoints = {
-    [base_1.BitcoinNetwork.MAINNET]: [
+    [BitcoinNetwork.MAINNET]: [
         "https://mempool.space/api/",
         "https://mempool.fra.mempool.space/api/",
         "https://mempool.va1.mempool.space/api/",
         "https://mempool.tk7.mempool.space/api/"
     ],
-    [base_1.BitcoinNetwork.TESTNET]: [
+    [BitcoinNetwork.TESTNET]: [
         "https://mempool.space/testnet/api/",
         "https://mempool.fra.mempool.space/testnet/api/",
         "https://mempool.va1.mempool.space/testnet/api/",
         "https://mempool.tk7.mempool.space/testnet/api/"
     ],
-    [base_1.BitcoinNetwork.TESTNET4]: [
+    [BitcoinNetwork.TESTNET4]: [
         "https://mempool.space/testnet4/api/",
         "https://mempool.fra.mempool.space/testnet4/api/",
         "https://mempool.va1.mempool.space/testnet4/api/",
@@ -29,7 +26,7 @@ const MempoolApiEndpoints = {
  *
  * @category Bitcoin
  */
-class MempoolApi {
+export class MempoolApi {
     /**
      * Returns api url that should be operational
      *
@@ -73,9 +70,9 @@ class MempoolApi {
                 resp = await response.text();
             }
             catch (e) {
-                throw new MempoolApiError_js_1.MempoolApiError(response.statusText, response.status);
+                throw new MempoolApiError(response.statusText, response.status);
             }
-            throw new MempoolApiError_js_1.MempoolApiError(resp, response.status);
+            throw new MempoolApiError(resp, response.status);
         }
         if (responseType === "str")
             return await response.text();
@@ -100,7 +97,7 @@ class MempoolApi {
                 }
                 catch (e) {
                     //Only mark as non operational on 5xx server errors!
-                    if (e instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(e.httpCode / 100) !== 5) {
+                    if (e instanceof MempoolApiError && Math.floor(e.httpCode / 100) !== 5) {
                         obj.operational = true;
                         throw e;
                     }
@@ -113,7 +110,7 @@ class MempoolApi {
         }
         catch (_e) {
             const e = _e;
-            throw e.errors.find(err => err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5) || e.errors[0];
+            throw e.errors.find(err => err instanceof MempoolApiError && Math.floor(err.httpCode / 100) !== 5) || e.errors[0];
         }
     }
     /**
@@ -127,25 +124,25 @@ class MempoolApi {
      * @private
      */
     async request(path, responseType, type = "GET", body) {
-        return (0, base_1.tryWithRetries)(() => {
+        return tryWithRetries(() => {
             const operationalPriceApi = this.getOperationalApi();
             if (operationalPriceApi != null) {
                 return this._request(operationalPriceApi.url, path, responseType, type, body).catch(err => {
                     //Only retry on 5xx server errors!
-                    if (err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5)
+                    if (err instanceof MempoolApiError && Math.floor(err.httpCode / 100) !== 5)
                         throw err;
                     operationalPriceApi.operational = false;
                     return this.requestFromMaybeOperationalUrls(path, responseType, type, body);
                 });
             }
             return this.requestFromMaybeOperationalUrls(path, responseType, type, body);
-        }, undefined, (err) => err instanceof MempoolApiError_js_1.MempoolApiError && Math.floor(err.httpCode / 100) !== 5);
+        }, undefined, (err) => err instanceof MempoolApiError && Math.floor(err.httpCode / 100) !== 5);
     }
     constructor(urlOrNetwork, timeout) {
         if (typeof (urlOrNetwork) === "number") {
             const endpoints = MempoolApiEndpoints[urlOrNetwork];
             if (endpoints == null)
-                throw new Error(`No default endpoints found for ${base_1.BitcoinNetwork[urlOrNetwork]} network, please pass the manually as string or string[]`);
+                throw new Error(`No default endpoints found for ${BitcoinNetwork[urlOrNetwork]} network, please pass the manually as string or string[]`);
             this.backends = endpoints.map(val => ({ url: val, operational: null }));
         }
         else {
@@ -196,7 +193,7 @@ class MempoolApi {
                 return null;
             throw e;
         });
-        return rawTransaction == null ? null : buffer_1.Buffer.from(rawTransaction, "hex");
+        return rawTransaction == null ? null : Buffer.from(rawTransaction, "hex");
     }
     /**
      * Returns confirmed & unconfirmed balance of the specific bitcoin address
@@ -330,4 +327,3 @@ class MempoolApi {
         return this.request("tx", "str", "POST", transactionHex);
     }
 }
-exports.MempoolApi = MempoolApi;
