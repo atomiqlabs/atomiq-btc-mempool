@@ -37,7 +37,7 @@
   "author": "adambor",
   "license": "ISC",
   "dependencies": {
-    "@atomiqlabs/base": "github:atomiqlabs/atomiq-base#perf/esm-treeshake",
+    "@atomiqlabs/base": "^13.6.0",
     "@scure/btc-signer": "^1.6.0"
   },
   "devDependencies": {
